@@ -29,6 +29,8 @@ const catalog: Record<string, [string, string][]> = {
   ],
 };
 
+let counter = 1;
+
 async function main() {
   for (const [name, books] of Object.entries(catalog)) {
     await prisma.genre.upsert({
@@ -36,7 +38,14 @@ async function main() {
       update: {},
       create: {
         name,
-        books: { create: books.map(([title, author]) => ({ title, author })) },
+        books: {
+          create: books.map(([title, author]) => ({
+            title,
+            author,
+            isbn: `PLACEHOLDER-${String(counter++).padStart(4, '0')}`,
+            totalCopies: 3,
+          })),
+        },
       },
     });
   }
